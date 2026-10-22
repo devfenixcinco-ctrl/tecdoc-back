@@ -1,0 +1,17 @@
+<?php
+
+use App\Http\Controllers\ManufacturersController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
+Route::get('/sync-manufacturers', function () {
+    return app(ManufacturersController::class)->syncManufacturers();
+});
+
+Route::get('/manufacturers/{type?}', function ($type = null) {
+    return app(ManufacturersController::class)->getManufacturers($type);
+});
