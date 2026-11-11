@@ -3,30 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Manufacturers;
+use App\Services\TecdocClient;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use RuntimeException;
 
 class ManufacturersController extends Controller
 {
-    public function syncManufacturers()
+    public function syncManufacturers(TecdocClient $tecdoc)
     {
-        $response = Http::withHeaders([
-            'X-Api-Key'    => '2BeBXg6QnEsEd55snsUcjnfBBhiQ28ttQfNDxhVJLqGxrx7dJ2Af',
-            'Content-Type' => 'application/json',
-        ])->post('https://webservice.tecalliance.services/pegasus-3-0/services/TecdocToCatDLB.jsonEndpoint?js', [
-            'getManufacturers2' => [
+        try {
+            $response = $tecdoc->call(config('tecdoc.default_client'), 'getManufacturers2', [
                 'country'            => 'CO',
                 'lang'               => 'es',
                 'linkingTargetType'  => 'VOLB',
-                'provider'           => 25100,
-            ],
-        ]);
-
-        if (!$response->successful()) {
+            ]);
+        } catch (RuntimeException $e) {
             return response()->json(['error' => 'Error al consultar TecDoc'], 500);
         }
 
-        $manufacturers = $response->json('data.array');
+        $manufacturers = data_get($response, 'data.array');
 
         if (empty($manufacturers)) {
             return response()->json(['message' => 'No se encontraron fabricantes'], 200);

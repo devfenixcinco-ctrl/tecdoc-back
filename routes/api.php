@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ManufacturersController;
+use App\Http\Controllers\TecdocController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,9 +10,11 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/sync-manufacturers', function () {
-    return app(ManufacturersController::class)->syncManufacturers();
+    return app()->call([app(ManufacturersController::class), 'syncManufacturers']);
 });
 
 Route::get('/manufacturers/{type?}', function ($type = null) {
     return app(ManufacturersController::class)->getManufacturers($type);
 });
+
+Route::post('/tecdoc/{client}', TecdocController::class);
