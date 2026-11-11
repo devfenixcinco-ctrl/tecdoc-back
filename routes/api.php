@@ -11,10 +11,10 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/sync-manufacturers', function () {
     return app()->call([app(ManufacturersController::class), 'syncManufacturers']);
-});
+})->middleware('throttle:tecdoc');
 
 Route::get('/manufacturers/{type?}', function ($type = null) {
     return app(ManufacturersController::class)->getManufacturers($type);
 });
 
-Route::post('/tecdoc/{client}', TecdocController::class);
+Route::post('/tecdoc/{client}', TecdocController::class)->middleware('throttle:tecdoc');

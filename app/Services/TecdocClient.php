@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
@@ -15,6 +16,7 @@ class TecdocClient
 
     /**
      * Llama a un método de TecDoc con las credenciales del cliente indicado.
+     * Las respuestas exitosas se guardan en caché por cliente y parámetros.
      */
     public function call(string $client, string $method, array $params): array
     {
@@ -27,7 +29,15 @@ class TecdocClient
         // El provider siempre lo define el servidor, nunca el navegador
         $params['provider'] = $config['provider'];
 
-        return $this->request($config['api_key'], $method, $params);
+        $ttl = config('tecdoc.cache_ttl');
+
+        if ($ttl <= 0) {
+            return $this->request($config['api_key'], $method, $params);
+        }
+
+        $cacheKey = 'tecdoc:'.$client.':'.$method.':'.sha1(json_encode($params));
+
+        return Cache::remember($cacheKey, $ttl, fn () => $this->request($config['api_key'], $method, $params));
     }
 
     private function request(string $apiKey, string $method, array $params): array

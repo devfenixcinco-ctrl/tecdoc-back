@@ -40,4 +40,10 @@ return [
         'getManufacturers2',
     ],
 
+    // Segundos que se guarda en caché cada respuesta exitosa (0 desactiva la caché)
+    'cache_ttl' => (int) env('TECDOC_CACHE_TTL', 3600),
+
+    // Solicitudes por minuto permitidas por IP y cliente
+    'rate_limit' => (int) env('TECDOC_RATE_LIMIT', 120),
+
 ];
