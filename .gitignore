@@ -28,3 +28,6 @@ Thumbs.db
 
 # Respaldo con .env y vendor; no debe versionarse
 map-manufacturers-api.zip
+
+# Build del frontend (tectdoc-front) copiado para que Laravel lo sirva
+/public/app

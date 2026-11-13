@@ -15,4 +15,16 @@ return [
 
     'allow_indexing' => (bool) env('SEO_ALLOW_INDEXING', false),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Frontend
+    |--------------------------------------------------------------------------
+    |
+    | index.html del build de Vite (tectdoc-front) que Laravel sirve con los
+    | metadatos de cada ruta. Por defecto el build se copia en public/app.
+    |
+    */
+
+    'spa_index' => env('SPA_INDEX_PATH') ?: public_path('app/index.html'),
+
 ];
