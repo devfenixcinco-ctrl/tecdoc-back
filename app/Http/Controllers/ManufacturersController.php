@@ -3,18 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Manufacturers;
+use App\Services\ClientRegistry;
 use App\Services\TecdocClient;
 use Illuminate\Http\Request;
 use RuntimeException;
 
 class ManufacturersController extends Controller
 {
-    public function syncManufacturers(TecdocClient $tecdoc)
+    public function syncManufacturers(TecdocClient $tecdoc, ClientRegistry $clients)
     {
+        $client = $clients->default();
+
         try {
-            $response = $tecdoc->call(config('tecdoc.default_client'), 'getManufacturers2', [
-                'country'            => 'CO',
-                'lang'               => 'es',
+            $response = $tecdoc->call($client, 'getManufacturers2', [
+                'country'            => $clients->get($client)['country'],
                 'linkingTargetType'  => 'VOLB',
             ]);
         } catch (RuntimeException $e) {

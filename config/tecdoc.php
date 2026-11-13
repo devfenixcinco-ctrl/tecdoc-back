@@ -17,19 +17,7 @@ return [
 
     'timeout' => (int) env('TECDOC_TIMEOUT', 20),
 
-    // Cliente usado por procesos internos (p. ej. sincronización de fabricantes)
-    'default_client' => env('TECDOC_DEFAULT_CLIENT', 'fenix'),
-
-    /*
-    | Credenciales y parámetros aislados por cliente. Para agregar un cliente
-    | se añade una entrada aquí con sus propias variables de entorno.
-    */
-    'clients' => [
-        'fenix' => [
-            'api_key' => env('TECDOC_FENIX_API_KEY'),
-            'provider' => (int) env('TECDOC_FENIX_PROVIDER', 25100),
-        ],
-    ],
+    // Las credenciales (clave y provider) de cada cliente están en config/clients.php
 
     // Métodos de TecDoc que el proxy acepta desde el frontend
     'allowed_methods' => [

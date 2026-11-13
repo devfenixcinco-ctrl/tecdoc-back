@@ -9,9 +9,13 @@ use RuntimeException;
 
 class TecdocClient
 {
+    public function __construct(private ClientRegistry $clients)
+    {
+    }
+
     public function hasClient(string $client): bool
     {
-        return ! empty(config("tecdoc.clients.$client.api_key"));
+        return ! empty($this->clients->get($client)['tecdoc']['api_key']);
     }
 
     /**
@@ -20,7 +24,8 @@ class TecdocClient
      */
     public function call(string $client, string $method, array $params): array
     {
-        $config = config("tecdoc.clients.$client");
+        $settings = $this->clients->get($client);
+        $config = $settings['tecdoc'] ?? [];
 
         if (empty($config['api_key'])) {
             throw new RuntimeException("Cliente TecDoc no configurado: $client");
@@ -28,6 +33,9 @@ class TecdocClient
 
         // El provider siempre lo define el servidor, nunca el navegador
         $params['provider'] = $config['provider'];
+
+        // Idioma del cliente cuando la consulta no indica otro
+        $params['lang'] ??= $settings['lang'];
 
         $ttl = config('tecdoc.cache_ttl');
 
