@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -50,10 +51,16 @@ class TecdocClient
 
     private function request(string $apiKey, string $method, array $params): array
     {
-        $response = Http::withHeaders(['X-Api-Key' => $apiKey])
-            ->acceptJson()
-            ->timeout(config('tecdoc.timeout'))
-            ->post(config('tecdoc.url'), [$method => $params]);
+        try {
+            $response = Http::withHeaders(['X-Api-Key' => $apiKey])
+                ->acceptJson()
+                ->timeout(config('tecdoc.timeout'))
+                ->post(config('tecdoc.url'), [$method => $params]);
+        } catch (ConnectionException $e) {
+            Log::warning('Sin conexión con TecDoc', ['method' => $method, 'message' => $e->getMessage()]);
+
+            throw new RuntimeException('Error al consultar TecDoc');
+        }
 
         $body = $response->json();
 
