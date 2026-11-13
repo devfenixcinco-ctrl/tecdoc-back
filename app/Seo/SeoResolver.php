@@ -144,7 +144,13 @@ class SeoResolver
             .($names->count() > 1 ? $this->p($names->join(', ')) : '')
             .$this->list($criteria->map(fn ($c) => e($c))->all());
 
-        return $this->page($title, $description, $content);
+        $image = $article['images'][0] ?? [];
+
+        $meta = $this->page($title, $description, $content);
+        $meta->image = $image['imageURL800'] ?? $image['imageURL400'] ?? $image['imageURL3200'] ?? null;
+        $meta->type = 'product';
+
+        return $meta;
     }
 
     private function notFound(): PageMeta

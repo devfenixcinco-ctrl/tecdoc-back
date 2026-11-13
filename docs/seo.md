@@ -69,8 +69,21 @@ Resultado esperado en pruebas: `X-Robots-Tag: noindex, nofollow`, `Disallow: /` 
 `content="noindex, nofollow"`. En producción se activa con `SEO_ALLOW_INDEXING=true` y
 `VITE_ALLOW_INDEXING=true`.
 
+## Metadatos por página (SEO-03)
+
+Cada página incluye en el HTML entregado: favicon, `<title>`, `meta description`, `canonical`, Open Graph
+(`og:type`, `og:site_name`, `og:locale`, `og:title`, `og:description`, `og:url`, `og:image`) y Twitter Card.
+
+- El título y la descripción salen de `SeoResolver` según la ruta (`lang/es/seo.php`, `lang/en/seo.php`).
+- La imagen social es la foto del artículo en las páginas de producto y, en el resto, `FENIX_OG_IMAGE`
+  (por defecto `/app/images/fenix.png`). El favicon se configura con `FENIX_FAVICON`.
+- Las URL de imagen se convierten en absolutas, como exige Open Graph.
+
 ## Comprobación del HTML por ruta
 
 ```bash
-curl -s https://<entorno>/product/<referencia> | grep -E '<title>|name="description"|<h1>'
+curl -s https://<entorno>/product/<referencia> | grep -E '<title>|name="description"|og:|twitter:|rel="icon"|<h1>'
 ```
+
+La vista previa se valida con el depurador de Facebook (developers.facebook.com/tools/debug) o
+LinkedIn Post Inspector sobre la URL pública del entorno.

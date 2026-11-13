@@ -52,6 +52,12 @@ return [
                 'portal_id' => env('FENIX_HUBSPOT_PORTAL_ID'),
                 'form_id' => env('FENIX_HUBSPOT_FORM_ID'),
             ],
+
+            // Favicon e imagen social por defecto (URL absoluta o ruta del sitio)
+            'seo' => [
+                'favicon' => env('FENIX_FAVICON') ?: '/app/images/fenix.png',
+                'og_image' => env('FENIX_OG_IMAGE') ?: '/app/images/fenix.png',
+            ],
         ],
     ],
 
