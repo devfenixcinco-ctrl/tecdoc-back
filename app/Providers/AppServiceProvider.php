@@ -26,5 +26,10 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(config('tecdoc.rate_limit'))
                 ->by($request->ip().'|'.$request->route('client'));
         });
+
+        // Registro de consentimientos: evita llenar la tabla con envíos automáticos
+        RateLimiter::for('consents', function (Request $request) {
+            return Limit::perMinute(10)->by($request->ip());
+        });
     }
 }

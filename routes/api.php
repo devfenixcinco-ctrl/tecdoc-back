@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientConfigController;
+use App\Http\Controllers\ConsentController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\ManufacturersController;
 use App\Http\Controllers\TecdocController;
@@ -24,3 +25,5 @@ Route::post('/tecdoc/{client}', TecdocController::class)->middleware('throttle:t
 Route::get('/config/{client}', ClientConfigController::class);
 
 Route::get('/legal/{client}/{policy}', LegalController::class);
+
+Route::post('/consents/{client}', [ConsentController::class, 'store'])->middleware('throttle:consents');
