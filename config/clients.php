@@ -58,6 +58,13 @@ return [
                 'favicon' => env('FENIX_FAVICON') ?: '/app/images/fenix.png',
                 'og_image' => env('FENIX_OG_IMAGE') ?: '/app/images/fenix.png',
             ],
+
+            // Banner de cookies (CMP): cookieyes, cookiebot o usercentrics, con el
+            // ID de la cuenta del cliente. Los textos se editan en el panel del CMP.
+            'consent' => [
+                'provider' => env('FENIX_CMP_PROVIDER'),
+                'id' => env('FENIX_CMP_ID'),
+            ],
         ],
     ],
 
