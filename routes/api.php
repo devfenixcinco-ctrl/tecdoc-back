@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientConfigController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\ManufacturersController;
 use App\Http\Controllers\TecdocController;
 use Illuminate\Http\Request;
@@ -21,3 +22,5 @@ Route::get('/manufacturers/{type?}', function ($type = null) {
 Route::post('/tecdoc/{client}', TecdocController::class)->middleware('throttle:tecdoc');
 
 Route::get('/config/{client}', ClientConfigController::class);
+
+Route::get('/legal/{client}/{policy}', LegalController::class);

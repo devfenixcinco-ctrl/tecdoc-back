@@ -4,6 +4,7 @@ namespace App\Seo;
 
 use App\Models\Manufacturers;
 use App\Services\ClientRegistry;
+use App\Services\LegalDocuments;
 use App\Services\TecdocClient;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -18,7 +19,7 @@ class SeoResolver
 
     private array $settings;
 
-    public function __construct(private TecdocClient $tecdoc, private ClientRegistry $clients)
+    public function __construct(private TecdocClient $tecdoc, private ClientRegistry $clients, private LegalDocuments $legal)
     {
     }
 
@@ -32,6 +33,8 @@ class SeoResolver
         return match (true) {
             $s === [] => $this->home(),
             $s === ['catalogo'] => $this->brands(),
+            $s === ['politica-de-privacidad'] => $this->legal('privacidad'),
+            $s === ['politica-de-cookies'] => $this->legal('cookies'),
             count($s) === 4 && $s[0] === 'catalogo' && $s[1] === 'model' => $this->models($s[2], $s[3]),
             count($s) === 5 && $s[0] === 'catalogo' && $s[1] === 'page' && $s[2] === 'results' => $this->search($s[3]),
             count($s) === 6 && $s[0] === 'catalogo' && $s[1] === 'page' && $s[2] === 'group' && $s[3] === 'results' => $this->search($s[5]),
@@ -151,6 +154,21 @@ class SeoResolver
         $meta->type = 'product';
 
         return $meta;
+    }
+
+    private function legal(string $policy): PageMeta
+    {
+        $document = $this->legal->find($this->client, $policy);
+
+        if (! $document) {
+            return $this->notFound();
+        }
+
+        // El HTML de la política ya viene escapado (html_input: strip)
+        $text = trim(preg_replace('/\s+/', ' ', strip_tags($document['html'])));
+        $description = Str::after($text, $document['title']);
+
+        return $this->page($document['title'], $description, $document['html']);
     }
 
     private function notFound(): PageMeta

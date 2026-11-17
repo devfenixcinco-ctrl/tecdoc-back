@@ -59,6 +59,12 @@ return [
                 'og_image' => env('FENIX_OG_IMAGE') ?: '/app/images/fenix.png',
             ],
 
+            // Contacto del delegado de protección de datos para las políticas
+            'legal' => [
+                'dpo_name' => env('FENIX_DPO_NAME'),
+                'dpo_email' => env('FENIX_DPO_EMAIL'),
+            ],
+
             // Banner de cookies (CMP): cookieyes, cookiebot o usercentrics, con el
             // ID de la cuenta del cliente. Los textos se editan en el panel del CMP.
             'consent' => [
