@@ -23,3 +23,15 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Compresión de texto: las respuestas JSON de la API (TecDoc) bajan a cerca de un décimo
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
+
+# Assets del frontend (public/app/assets): llevan hash en el nombre, se guardan un año
+<IfModule mod_headers.c>
+    <If "%{REQUEST_URI} =~ m#^(/public)?/app/assets/#">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </If>
+</IfModule>
