@@ -17,4 +17,8 @@ return [
     'product_description' => ':name :brand, part number :number.',
     'product_brand' => 'Brand: :brand',
     'not_found_title' => 'Page not found',
+    'contact_title' => 'Contact',
+    'contact_description' => 'Write to us and a :site advisor will contact you about parts, catalog or business partnerships.',
+    'thanks_title' => 'Thank you for contacting us',
+    'thanks_description' => 'We received your details. A :site advisor will contact you soon.',
 ];

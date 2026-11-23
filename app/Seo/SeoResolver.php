@@ -3,6 +3,7 @@
 namespace App\Seo;
 
 use App\Models\Manufacturers;
+use App\Services\AudiencePages;
 use App\Services\ClientRegistry;
 use App\Services\LegalDocuments;
 use App\Services\TecdocClient;
@@ -19,8 +20,12 @@ class SeoResolver
 
     private array $settings;
 
-    public function __construct(private TecdocClient $tecdoc, private ClientRegistry $clients, private LegalDocuments $legal)
-    {
+    public function __construct(
+        private TecdocClient $tecdoc,
+        private ClientRegistry $clients,
+        private LegalDocuments $legal,
+        private AudiencePages $audiences,
+    ) {
     }
 
     public function resolve(string $path, string $client): PageMeta
@@ -35,6 +40,9 @@ class SeoResolver
             $s === ['catalogo'] => $this->brands(),
             $s === ['politica-de-privacidad'] => $this->legal('privacidad'),
             $s === ['politica-de-cookies'] => $this->legal('cookies'),
+            count($s) === 1 && isset(AudiencePages::PAGES[$s[0]]) => $this->document($this->audiences->find($this->client, $s[0])),
+            $s === ['contacto'] => $this->contact(),
+            $s === ['gracias'] => $this->thanks(),
             count($s) === 4 && $s[0] === 'catalogo' && $s[1] === 'model' => $this->models($s[2], $s[3]),
             count($s) === 5 && $s[0] === 'catalogo' && $s[1] === 'page' && $s[2] === 'results' => $this->search($s[3]),
             count($s) === 6 && $s[0] === 'catalogo' && $s[1] === 'page' && $s[2] === 'group' && $s[3] === 'results' => $this->search($s[5]),
@@ -158,8 +166,14 @@ class SeoResolver
 
     private function legal(string $policy): PageMeta
     {
-        $document = $this->legal->find($this->client, $policy);
+        return $this->document($this->legal->find($this->client, $policy));
+    }
 
+    /**
+     * Página cuyo contenido es un texto del cliente en Markdown (políticas, páginas por público).
+     */
+    private function document(?array $document): PageMeta
+    {
         if (! $document) {
             return $this->notFound();
         }
@@ -169,6 +183,22 @@ class SeoResolver
         $description = Str::after($text, $document['title']);
 
         return $this->page($document['title'], $description, $document['html']);
+    }
+
+    private function contact(): PageMeta
+    {
+        $title = $this->t('contact_title');
+        $description = $this->t('contact_description');
+
+        return $this->page($title, $description, $this->h1($title).$this->p($description));
+    }
+
+    private function thanks(): PageMeta
+    {
+        $title = $this->t('thanks_title');
+
+        // Página de conversión: no tiene valor en buscadores
+        return $this->page($title, $this->t('thanks_description'), $this->h1($title), robots: 'noindex, nofollow');
     }
 
     private function notFound(): PageMeta

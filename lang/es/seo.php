@@ -17,4 +17,8 @@ return [
     'product_description' => ':name :brand, referencia :number.',
     'product_brand' => 'Marca: :brand',
     'not_found_title' => 'Página no encontrada',
+    'contact_title' => 'Contacto',
+    'contact_description' => 'Escríbanos y un asesor de :site le contactará para ayudarle con repuestos, catálogo o alianzas comerciales.',
+    'thanks_title' => 'Gracias por escribirnos',
+    'thanks_description' => 'Recibimos sus datos. Un asesor de :site le contactará pronto.',
 ];

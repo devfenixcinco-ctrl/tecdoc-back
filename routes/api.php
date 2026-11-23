@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AudienceController;
 use App\Http\Controllers\ClientConfigController;
 use App\Http\Controllers\ConsentController;
 use App\Http\Controllers\LeadController;
@@ -26,6 +27,8 @@ Route::post('/tecdoc/{client}', TecdocController::class)->middleware('throttle:t
 Route::get('/config/{client}', ClientConfigController::class);
 
 Route::get('/legal/{client}/{policy}', LegalController::class);
+
+Route::get('/audiences/{client}/{page}', AudienceController::class);
 
 Route::post('/consents/{client}', [ConsentController::class, 'store'])->middleware('throttle:consents');
 
