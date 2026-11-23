@@ -48,9 +48,28 @@ return [
                 'instagram' => env('FENIX_FOOTER_INSTAGRAM'),
             ],
 
+            // Destino del formulario de contacto (CRM-01). El envío lo hace el backend con
+            // la API de formularios de HubSpot; no requiere token secreto.
             'hubspot' => [
                 'portal_id' => env('FENIX_HUBSPOT_PORTAL_ID'),
                 'form_id' => env('FENIX_HUBSPOT_FORM_ID'),
+                // Cuentas alojadas en la UE: https://api-eu1.hsforms.com
+                'host' => env('FENIX_HUBSPOT_HOST') ?: 'https://api.hsforms.com',
+                // true si el formulario de HubSpot tiene activas las opciones de privacidad
+                'legal_consent' => (bool) env('FENIX_HUBSPOT_LEGAL_CONSENT', false),
+                // Nombre interno de cada propiedad del contacto en HubSpot
+                'fields' => [
+                    'name' => 'firstname',
+                    'company' => 'company',
+                    'email' => 'email',
+                    'phone' => 'phone',
+                    'segment' => env('FENIX_HUBSPOT_FIELD_SEGMENT') ?: 'segmento',
+                    'utm_source' => 'utm_source',
+                    'utm_medium' => 'utm_medium',
+                    'utm_campaign' => 'utm_campaign',
+                    'landing_page' => env('FENIX_HUBSPOT_FIELD_LANDING') ?: 'pagina_de_entrada',
+                    'consent_date' => env('FENIX_HUBSPOT_FIELD_CONSENT_DATE') ?: 'fecha_consentimiento',
+                ],
             ],
 
             // Favicon e imagen social por defecto (URL absoluta o ruta del sitio)

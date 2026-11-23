@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Consent;
+use App\Services\ConsentRecorder;
 use App\Services\LegalDocuments;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class ConsentController extends Controller
 {
@@ -13,11 +12,9 @@ class ConsentController extends Controller
      * Registra un consentimiento explícito con su fecha (LGPD-03). Solo se
      * acepta si la casilla fue marcada; la fecha la pone el servidor.
      */
-    public function store(Request $request, string $client, LegalDocuments $documents)
+    public function store(Request $request, string $client, LegalDocuments $documents, ConsentRecorder $consents)
     {
-        $privacy = $documents->find($client, 'privacidad');
-
-        if (! $privacy) {
+        if (! $documents->find($client, 'privacidad')) {
             return response()->json(['error' => 'Cliente no encontrado'], 404);
         }
 
@@ -28,16 +25,7 @@ class ConsentController extends Controller
             'reference' => ['nullable', 'string', 'max:100'],
         ]);
 
-        $consent = Consent::create([
-            'client' => $client,
-            'purpose' => $data['purpose'],
-            'policy_version' => $privacy['version'],
-            'email' => $data['email'] ?? null,
-            'reference' => $data['reference'] ?? null,
-            'ip' => $request->ip(),
-            'user_agent' => Str::limit((string) $request->userAgent(), 250, ''),
-            'accepted_at' => now(),
-        ]);
+        $consent = $consents->record($request, $client, $data['purpose'], $data['email'] ?? null, $data['reference'] ?? null);
 
         return response()->json([
             'id' => $consent->id,

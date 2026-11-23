@@ -31,5 +31,10 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('consents', function (Request $request) {
             return Limit::perMinute(10)->by($request->ip());
         });
+
+        // Formulario de contacto: evita envíos masivos
+        RateLimiter::for('leads', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
     }
 }
